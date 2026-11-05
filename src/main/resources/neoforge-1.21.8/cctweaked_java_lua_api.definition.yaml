@@ -1,0 +1,3 @@
+templates:
+  - template: java_lua_api.java.ftl
+    name: "@SRCROOT/@BASEPACKAGEPATH/cctweaked/@NAMECCTLuaAPI.java"
