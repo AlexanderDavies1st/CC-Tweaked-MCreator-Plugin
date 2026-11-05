@@ -1,15 +1,15 @@
 {
   "id": "cctweaked_mcreator_integration",
   "supportedversions": [
-    202600199999,
-    2026001
+    202600299999,
+    2026002
   ],
   "weight": 3200,
   "javaplugin": "net.alex.cctweakedmcreator.CCTweakedMCreatorPlugin",
   "info": {
     "name": "CC: Tweaked Integration",
     "version": "0.1.0",
-    "description": "Adds CC: Tweaked Lua ROM resources and Java-backed Lua API mod elements for NeoForge 1.21.8.",
+    "description": "Adds CC: Tweaked Lua ROM resources and Java-backed Lua API mod elements for MCreator 2026.2 and NeoForge 1.21.8.",
     "author": "Alex"
   }
 }
