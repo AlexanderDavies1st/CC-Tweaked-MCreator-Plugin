@@ -13,7 +13,7 @@ if (("${#GRADLE_TASKS[@]}" == 0)); then
     GRADLE_TASKS=(clean jar)
 fi
 
-fail() { printf 'ERROR: %s\\n' "$*" >&2; exit 1; }
+fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 
 command -v java >/dev/null 2>&1 || fail "Java was not found. Open this project in the supplied Codespaces environment or install JDK 21."
 command -v git >/dev/null 2>&1 || fail "Git was not found. Install Git and retry."
@@ -28,17 +28,17 @@ if [[ ! -f "${MCREATOR_DIR}/gradlew" || ! -f "${MCREATOR_DIR}/settings.gradle" ]
     if [[ -e "$MCREATOR_DIR" ]]; then
         fail "${MCREATOR_DIR} exists but is not an MCreator source checkout. Remove it or set MCREATOR_SOURCE_DIR to a valid checkout."
     fi
-    printf 'Downloading MCreator source %s (first build only)...\\n' "$MCREATOR_VERSION"
+    printf 'Downloading MCreator source %s (first build only)...\n' "$MCREATOR_VERSION"
     git clone --depth 1 --branch "$MCREATOR_VERSION" https://github.com/MCreator/MCreator.git "$MCREATOR_DIR"
 fi
 
 [[ -f "${MCREATOR_DIR}/gradlew" ]] || fail "MCreator Gradle wrapper not found in ${MCREATOR_DIR}."
 chmod +x "${MCREATOR_DIR}/gradlew"
 
-printf '\\nBuilding CC:Tweaked MCreator plugin against MCreator %s...\\n' "$MCREATOR_VERSION"
+printf '\nBuilding CC:Tweaked MCreator plugin against MCreator %s...\n' "$MCREATOR_VERSION"
 cd "$ROOT_DIR"
 "${MCREATOR_DIR}/gradlew" -p "$ROOT_DIR" "-Pmcreator_path=${MCREATOR_DIR}" --no-daemon "${GRADLE_TASKS[@]}"
 
 PLUGIN_ZIP="${ROOT_DIR}/build/libs/cc-tweaked-mcreator-plugin.zip"
 [[ -f "$PLUGIN_ZIP" ]] || fail "Gradle completed, but the expected plugin archive was not created: ${PLUGIN_ZIP}"
-printf '\\nBUILD SUCCESSFUL\\nPlugin archive: %s\\n' "$PLUGIN_ZIP"
+printf '\nBUILD SUCCESSFUL\nPlugin archive: %s\n' "$PLUGIN_ZIP"
