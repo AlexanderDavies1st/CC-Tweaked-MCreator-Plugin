@@ -31,7 +31,7 @@ public class CCJavaLuaAPIGUI extends ModElementGUI<CCJavaLuaAPI> {
         extraImports.setTabSize(4);
         methods.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         methods.setTabSize(4);
-        methods.setText("    @LuaFunction\\n    public final String greet(String name) {\\n        return \\"Hello, \\" + name + \\"!\\";\\n    }\\n");
+        methods.setText("    @LuaFunction\n    public final String greet(String name) {\n        return \"Hello, \" + name + \"!\";\n    }\n");
 
         JPanel properties = new JPanel(new GridBagLayout());
         properties.setOpaque(false);
