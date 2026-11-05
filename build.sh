@@ -36,7 +36,7 @@ if [[ -d "$MCREATOR_DIR" ]]; then
         if [[ -n "${MCREATOR_SOURCE_DIR:-}" ]]; then
             fail "MCREATOR_SOURCE_DIR points to tag '${ACTUAL_TAG:-unknown}', but ${MCREATOR_VERSION} is required. Point it to the correct checkout."
         fi
-        printf 'Existing MCreator checkout is %s; replacing it with %s...\\n' "${ACTUAL_TAG:-unknown}" "$MCREATOR_VERSION"
+        printf 'Existing MCreator checkout is %s; replacing it with %s...\n' "${ACTUAL_TAG:-unknown}" "$MCREATOR_VERSION"
         rm -rf -- "$MCREATOR_DIR"
     fi
 fi
@@ -44,7 +44,7 @@ fi
 if [[ ! -f "${MCREATOR_DIR}/gradlew" || ! -f "${MCREATOR_DIR}/settings.gradle" ]]; then
     mkdir -p "$BUILD_DEPS_DIR"
     [[ ! -e "$MCREATOR_DIR" ]] || fail "${MCREATOR_DIR} exists but is not a valid MCreator source checkout."
-    printf 'Downloading MCreator source %s...\\n' "$MCREATOR_VERSION"
+    printf 'Downloading MCreator source %s...\n' "$MCREATOR_VERSION"
     git clone --depth 1 --branch "$MCREATOR_VERSION" https://github.com/MCreator/MCreator.git "$MCREATOR_DIR"
 fi
 
