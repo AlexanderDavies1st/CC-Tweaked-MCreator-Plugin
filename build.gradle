@@ -8,7 +8,7 @@ plugins {
 group = 'net.alex.cctweakedmcreator'
 version = new JsonSlurper().parse(file('src/main/resources/plugin.json'))['info']['version']
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 configurations {
     // MCreator plugin builds use this configuration for dependencies that must
@@ -26,8 +26,29 @@ project(':MCreator').plugins.withType(IdeaPlugin).configureEach { ideaPlugin ->
     ideaPlugin.model.project = rootProject.idea.project
 }
 
-// Make MCreator's implementation dependencies visible while compiling this plugin.
+// MCreator 2026.2 uses JCEF classes bundled with its JetBrains Runtime.
+// The source checkout's own compile classpath does not include jcef.jar,
+// so add it explicitly after the build script has configured its Java plugin.
 rootProject.project(':MCreator').afterEvaluate { mcreator ->
+    def osName = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+    def arch = System.getProperty('os.arch').toLowerCase(Locale.ROOT)
+    def jbrHome
+    if (osName.contains('win')) {
+        jbrHome = new File(mcreator.projectDir, 'jdk/jbr25_win_64')
+    } else if (osName.contains('mac')) {
+        jbrHome = new File(mcreator.projectDir,
+                arch.contains('aarch64') ? 'jdk/jbr25_mac_aarch64/Contents/Home' : 'jdk/jbr25_mac_x64/Contents/Home')
+    } else {
+        jbrHome = new File(mcreator.projectDir, 'jdk/jbr25_linux_64')
+    }
+
+    def jcefJar = new File(jbrHome, 'lib/jcef.jar')
+    if (!jcefJar.isFile()) {
+        throw new GradleException("MCreator 2026.2 JCEF dependency was not found at ${jcefJar}. Run the MCreator JDK download task before building.")
+    }
+    mcreator.dependencies.add('compileOnly', mcreator.files(jcefJar))
+
+    // Make MCreator's implementation dependencies visible while compiling this plugin.
     mcreator.configurations.named('implementation').get().dependencies.each { dep ->
         dependencies.add('implementation', dep)
     }
@@ -44,7 +65,7 @@ tasks.jar {
 tasks.register('runMCreatorWithPlugin', JavaExec) {
     dependsOn jar
     environment('MCREATOR_PLUGINS_FOLDER', file('./build/libs'))
-    jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+    jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--enable-native-access=ALL-UNNAMED,jcef'
     classpath = project(':MCreator').sourceSets.main.runtimeClasspath
     mainClass = 'net.mcreator.Launcher'
     workingDir = mcreator_path
