@@ -1,0 +1,17 @@
+name: "CC: Tweaked API"
+neoforge-1.21.8:
+  required_when_enabled: false
+  gradle: |
+    repositories {
+        maven {
+            name = "CC Tweaked Maven"
+            url = "https://maven.squiddev.cc"
+            content {
+                includeGroup("cc.tweaked")
+            }
+        }
+    }
+
+    dependencies {
+        compileOnly("cc.tweaked:cc-tweaked-1.21.8-common-api:1.116.1")
+    }
