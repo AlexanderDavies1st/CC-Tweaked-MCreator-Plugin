@@ -11,17 +11,22 @@ version = new JsonSlurper().parse(file('src/main/resources/plugin.json'))['info'
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 configurations {
-    implementation.extendsFrom export
+    // MCreator plugin builds use this configuration for dependencies that must
+    // be bundled into the plugin archive.
+    export
+    implementation.extendsFrom(export)
 }
 
 dependencies {
     implementation project(':MCreator')
 }
 
+// MCreator's build script configures idea.project on the root project.
 project(':MCreator').plugins.withType(IdeaPlugin).configureEach { ideaPlugin ->
     ideaPlugin.model.project = rootProject.idea.project
 }
 
+// Make MCreator's implementation dependencies visible while compiling this plugin.
 rootProject.project(':MCreator').afterEvaluate { mcreator ->
     mcreator.configurations.named('implementation').get().dependencies.each { dep ->
         dependencies.add('implementation', dep)
