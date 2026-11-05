@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # CC:Tweaked MCreator Plugin - Codespaces/Linux build script
 # Usage: ./build.sh [Gradle tasks...]
-# Example: ./build.sh clean jar
+# Example: ./build.sh clean jar --stacktrace
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-MCREATOR_VERSION="${MCREATOR_VERSION:-2026.1.14619}"
+MCREATOR_VERSION="${MCREATOR_VERSION:-2026.2.33518}"
 BUILD_DEPS_DIR="${BUILD_DEPS_DIR:-${ROOT_DIR}/.build-deps}"
 MCREATOR_DIR="${MCREATOR_SOURCE_DIR:-${BUILD_DEPS_DIR}/MCreator}"
 GRADLE_TASKS=("$@")
@@ -15,13 +15,13 @@ fi
 
 fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 
-command -v java >/dev/null 2>&1 || fail "Java was not found. Open this project in the supplied Codespaces environment or install JDK 21."
+command -v java >/dev/null 2>&1 || fail "Java was not found. Install JDK 25 or use the supplied Codespaces environment."
 command -v git >/dev/null 2>&1 || fail "Git was not found. Install Git and retry."
 
 JAVA_VERSION="$(java -version 2>&1 | awk -F '"' '/version/ {print $2; exit}')"
 JAVA_MAJOR="${JAVA_VERSION%%.*}"
 if [[ "$JAVA_MAJOR" == "1" ]]; then JAVA_MAJOR="$(printf '%s' "$JAVA_VERSION" | cut -d. -f2)"; fi
-[[ "$JAVA_MAJOR" == "21" ]] || fail "JDK 21 is required for MCreator ${MCREATOR_VERSION}; detected Java ${JAVA_VERSION:-unknown}."
+[[ "$JAVA_MAJOR" == "25" ]] || fail "JDK 25 is required for MCreator ${MCREATOR_VERSION}; detected Java ${JAVA_VERSION:-unknown}."
 
 if [[ ! -f "${MCREATOR_DIR}/gradlew" || ! -f "${MCREATOR_DIR}/settings.gradle" ]]; then
     mkdir -p "$BUILD_DEPS_DIR"
@@ -34,6 +34,9 @@ fi
 
 [[ -f "${MCREATOR_DIR}/gradlew" ]] || fail "MCreator Gradle wrapper not found in ${MCREATOR_DIR}."
 chmod +x "${MCREATOR_DIR}/gradlew"
+
+printf '\nPreparing MCreator 2026.2 JCEF toolchain...\n'
+"${MCREATOR_DIR}/gradlew" -p "$MCREATOR_DIR" downloadJDKLinux64 --no-daemon
 
 printf '\nBuilding CC:Tweaked MCreator plugin against MCreator %s...\n' "$MCREATOR_VERSION"
 cd "$ROOT_DIR"
