@@ -1,0 +1,3 @@
+templates:
+  - template: lua_rom_resource.lua.ftl
+    name: "@RESROOT/data/computercraft/lua/rom/apis/pocket/@registryname.lua"
