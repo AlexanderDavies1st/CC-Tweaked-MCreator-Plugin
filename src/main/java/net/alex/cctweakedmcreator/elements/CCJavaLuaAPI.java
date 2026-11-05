@@ -12,7 +12,7 @@ public class CCJavaLuaAPI extends GeneratableElement {
     /** Additional Java import declarations, one per line. */
     public String extraImports = "";
     /** Java class members/methods. Add @LuaFunction methods here. */
-    public String methods = "    @LuaFunction\\n    public final String greet(String name) {\\n        return \\"Hello, \\" + name + \\"!\\";\\n    }\\n";
+    public String methods = "    @LuaFunction\n    public final String greet(String name) {\n        return \"Hello, \" + name + \"!\";\n    }\n";
 
     public CCJavaLuaAPI(ModElement element) {
         super(element);
