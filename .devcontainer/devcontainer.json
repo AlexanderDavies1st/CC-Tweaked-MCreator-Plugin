@@ -1,0 +1,21 @@
+{
+  "name": "CC:Tweaked MCreator Plugin",
+  "image": "mcr.microsoft.com/devcontainers/java:1-21-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-gradle"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "files.eol": "\\n"
+      }
+    }
+  },
+  "postCreateCommand": "chmod +x ./build.sh",
+  "remoteUser": "vscode"
+}
