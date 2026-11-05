@@ -1,0 +1,58 @@
+import groovy.json.JsonSlurper
+
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+group = 'net.alex.cctweakedmcreator'
+version = new JsonSlurper().parse(file('src/main/resources/plugin.json'))['info']['version']
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+configurations {
+    implementation.extendsFrom export
+}
+
+dependencies {
+    implementation project(':MCreator')
+}
+
+project(':MCreator').plugins.withType(IdeaPlugin).configureEach { ideaPlugin ->
+    ideaPlugin.model.project = rootProject.idea.project
+}
+
+rootProject.project(':MCreator').afterEvaluate { mcreator ->
+    mcreator.configurations.named('implementation').get().dependencies.each { dep ->
+        dependencies.add('implementation', dep)
+    }
+}
+
+tasks.jar {
+    archiveFileName.set('cc-tweaked-mcreator-plugin.zip')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.export.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.register('runMCreatorWithPlugin', JavaExec) {
+    dependsOn jar
+    environment('MCREATOR_PLUGINS_FOLDER', file('./build/libs'))
+    jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+    classpath = project(':MCreator').sourceSets.main.runtimeClasspath
+    mainClass = 'net.mcreator.Launcher'
+    workingDir = mcreator_path
+}
+
+subprojects { subproject ->
+    subproject.plugins.withType(JavaPlugin).tap {
+        configureEach {
+            test {
+                dependsOn rootProject.jar
+                environment('MCREATOR_PLUGINS_FOLDER', new File(rootProject.projectDir, '/build/libs'))
+                workingDir = mcreator_path
+            }
+        }
+    }
+}
