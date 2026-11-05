@@ -8,7 +8,7 @@ $Mcreator = if ($env:MCREATOR_SOURCE_DIR) { $env:MCREATOR_SOURCE_DIR } else { Jo
 
 if (-not (Get-Command java -ErrorAction SilentlyContinue)) { throw 'Java was not found. Install JDK 25.' }
 $JavaOutput = (& java -version 2>&1 | Select-Object -First 1).ToString()
-if ($JavaOutput -notmatch '"25(?:\\.|"|-)') { throw "JDK 25 is required. Detected: $JavaOutput" }
+if ($JavaOutput -notmatch '"25(?:\.|"|-)') { throw "JDK 25 is required. Detected: $JavaOutput" }
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw 'Git was not found. Install Git.' }
 
 if (-not (Test-Path (Join-Path $Mcreator 'gradlew.bat'))) {
